@@ -2,14 +2,15 @@ import { Model } from 'mongoose'
 import { USER_ROLE } from './auth.constance'
 
 export interface IUser {
-  name: string
-  email: string
-  password: string
-  phone: string
-  role: 'admin' | 'user'
-  username: string
-  profilePicture: string
-  isPremium: boolean
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  role: 'admin' | 'user';
+  username: string;
+  profilePicture: string;
+  isPremium: boolean;
+  bio? : string;
 }
 
 export interface ILoginUser {

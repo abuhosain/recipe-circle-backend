@@ -39,6 +39,9 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
       required: true,
     },
+    bio: {
+      type: String,
+    },
   },
   {
     timestamps: true,

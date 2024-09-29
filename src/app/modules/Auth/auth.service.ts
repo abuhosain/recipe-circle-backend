@@ -7,6 +7,10 @@ import { createToken } from './auth.utils'
 import config from '../../config'
 
 const signUpUserIntoDb = async (payload: IUser) => {
+  const user = await User.findOne({ username: payload.username })
+  if (user) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken')
+  }
   const result = await User.create(payload)
   return result
 }
@@ -42,14 +46,15 @@ const loginUser = async (payload: ILoginUser) => {
 
   const { email } = user
 
-  const userData = await User.findOne({ email });
+  const userData = await User.findOne({ email })
 
   return {
-    accessToken, user : userData
+    accessToken,
+    user: userData,
   }
 }
 
 export const AuthServices = {
   signUpUserIntoDb,
-  loginUser
+  loginUser,
 }
