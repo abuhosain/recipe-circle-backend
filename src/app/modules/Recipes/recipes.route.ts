@@ -9,7 +9,7 @@ router.post('/', RecipeControllers.createRecipe)
 
 router.delete(
   '/:id',
-  auth(USER_ROLE.admin, USER_ROLE.user),
+  auth( USER_ROLE.user),
   RecipeControllers.deleteRecipe,
 )
 
