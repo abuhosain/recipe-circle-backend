@@ -1,5 +1,8 @@
 import { Types } from "mongoose";
 import { IIngredient } from "../Ingredient/ingredient.interface";
+import { IRating } from "../Rating/rating.interface";
+import { IComment } from "../Comment/comment.interface";
+import { IVote } from "../Vote/vote.interface";
  
 
 
@@ -11,23 +14,9 @@ export interface ITimer {
   isActive: boolean;
 }
 
-export interface IRating {
-  id: string;
-  user: Types.ObjectId;
-  rating: number; // 1 to 5
-}
 
-export interface IComment {
-  id: string;
-  user: Types.ObjectId;
-  content: string;
-}
 
-export interface IVote {
-  id: string;
-  user: Types.ObjectId;
-  vote: 1 | -1;
-}
+
 
 export interface IRecipe {
   title: string;
@@ -42,7 +31,7 @@ export interface IRecipe {
   tags?: string[];
   cookingTime: number; // In minutes
   ratings?: IRating[];
-  comments?: Comment[];
+  comments?: IComment[];
   votes?: IVote[];
   averageRating?: number;
   voteScore?: number;
