@@ -1,0 +1,25 @@
+import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
+import { User } from "../Auth/auth.model";
+import { IRecipe } from "./recipes.interface";
+import { Recipe } from "./recipes.model";
+
+const createRecipesIntoDb = async (payload : IRecipe) => {
+    const {author} = payload;
+    const user = await User.findById(author);
+    if(!user){
+        throw new AppError(httpStatus.BAD_REQUEST, "User not found")
+    }
+    const result = await Recipe.create(payload);
+    return result;
+}
+
+const deleteRecipesFromDb = async (id : string) => {
+    const result = await Recipe.findByIdAndDelete(id);
+    return result;
+}
+
+export const RecipeServices = {
+    createRecipesIntoDb,
+    deleteRecipesFromDb
+}
