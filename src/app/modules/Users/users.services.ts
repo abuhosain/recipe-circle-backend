@@ -5,8 +5,8 @@ import httpStatus from 'http-status'
 import { IUser } from '../Auth/auth.interface'
 import { Types } from 'mongoose'
 
-const getUserFromDb = async (payload: JwtPayload) => {
-  const user = await User.findOne({ email: payload?.email })
+const getUserFromDb = async (id : string) => {
+  const user = await User.findOne({ _id : id, isBlocked : false, isDeleted : false })
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found')
   }

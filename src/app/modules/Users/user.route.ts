@@ -7,7 +7,7 @@ import { USER_ROLE } from "../Auth/auth.constance";
 const router = express.Router();
 
 // get user
-router.get("/", auth(USER_ROLE.user), UserController.getUser);
+router.get("/:id",  UserController.getUser);
 
 // update user;
 router.put("/", auth(USER_ROLE.user), UserController.updateUser);

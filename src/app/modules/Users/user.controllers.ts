@@ -7,8 +7,8 @@ import AppError from '../../errors/AppError'
 import { Types } from 'mongoose'
 
 const getUser = catchAsync(async (req, res) => {
-  const user: any = req.user
-  const result = await UserServices.getUserFromDb(user)
+  const { id } = req.params
+  const result = await UserServices.getUserFromDb(id)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
