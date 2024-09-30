@@ -48,9 +48,23 @@ const unPublishRecipe = catchAsync(async (req, res) => {
       })
 })
 
+const deleteRecipe = catchAsync(async (req, res) => {
+    const {id} = req.params; 
+    const result = await AdminServices.deleteRecipesFromDb(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Recipe deleted Successfully',
+        data: result,
+      })
+})
+
+
+
 export const AdminControllers = {
     blockUser,
     unBlockUser,
     publishRecipe,
-    unPublishRecipe
+    unPublishRecipe,
+    deleteRecipe
 }

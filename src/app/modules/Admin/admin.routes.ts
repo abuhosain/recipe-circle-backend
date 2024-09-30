@@ -12,10 +12,11 @@ router.post('/block/:id', auth(USER_ROLE.admin), AdminControllers.blockUser);
 router.post('/ublock/:id', auth(USER_ROLE.admin), AdminControllers.unBlockUser);
 
 // publish recipe
-router.post('/block/:id', auth(USER_ROLE.admin), AdminControllers.publishRecipe);
-// unpublish user
-router.post('/ublock/:id', auth(USER_ROLE.admin), AdminControllers.unPublishRecipe);
-
+router.post('/publish/:id', auth(USER_ROLE.admin), AdminControllers.publishRecipe);
+// unpublish recipe
+router.post('/unpublish/:id', auth(USER_ROLE.admin), AdminControllers.unPublishRecipe);
+// delete recipe
+router.post('/:id', auth(USER_ROLE.admin), AdminControllers.deleteRecipe);
 
 
 export const AdminRoutes = router

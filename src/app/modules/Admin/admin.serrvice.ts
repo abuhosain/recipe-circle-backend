@@ -29,6 +29,10 @@ const unBlockUser = async (id: string) => {
   return result
 }
 
+const deleteRecipesFromDb = async (id : string) => {
+  const result = await Recipe.findByIdAndDelete(id);
+  return result;
+}
 
 
 
@@ -62,5 +66,6 @@ export const AdminServices = {
   blockUser,
   unBlockUser,
   publishRecipe,
-  unPublishRecipe
+  unPublishRecipe,
+  deleteRecipesFromDb
 }
