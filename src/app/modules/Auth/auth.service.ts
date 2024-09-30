@@ -16,11 +16,20 @@ const signUpUserIntoDb = async (payload: IUser) => {
 }
 
 const loginUser = async (payload: ILoginUser) => {
-  const user = await User.isUserExistsByEmail(payload.email)
+  const user = await User.isUserExistsByEmail(payload.email);
+
+  
 
   // if user not found
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found')
+  }
+
+  if(user.isDeleted){
+    throw new AppError(httpStatus.BAD_REQUEST, "This user is deleted")
+  }
+  if(user.isBlocked){
+    throw new AppError(httpStatus.BAD_REQUEST, "This user is block")
   }
 
   if (!(await User.isUserPasswordMatch(payload?.password, user?.password))) {

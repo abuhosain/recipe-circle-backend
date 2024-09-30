@@ -1,16 +1,21 @@
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { USER_ROLE } from './auth.constance'
 
 export interface IUser {
+  _id? : Types.ObjectId;
   name: string;
   email: string;
   password: string;
   phone: string;
   role: 'admin' | 'user';
+  followers?: Types.ObjectId[];
+  following?: Types.ObjectId[];
   username: string;
   profilePicture: string;
   isPremium: boolean;
   bio? : string;
+  isDeleted : boolean;
+  isBlocked : boolean;
 }
 
 export interface ILoginUser {
