@@ -69,11 +69,26 @@ const deleteComment = catchAsync(async (req, res) => {
   });
 });
 
+// Upvote or downvote a recipe
+const vote = catchAsync(async (req, res) => {
+  const { vote } = req.body; // 1 for upvote, -1 for downvote
+  const { recipeId } = req.params;
+  const { id: userId } = req.user; // User ID from authentication
 
+  const updatedRecipe = await SocialServices.voteRecipe(userId, recipeId, vote);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Vote submitted successfully',
+    data: updatedRecipe,
+  });
+});
 
 export const SocialController = {
   addRating,
   addComment,
   updateComment,
-  deleteComment
+  deleteComment,
+  vote
 };

@@ -19,10 +19,13 @@ router.post(
 )
 
 // Update a comment by _id
-router.put('/recipes/:recipeId/comment/:commentId', auth('user'), SocialController.updateComment);
+router.put('/recipes/:recipeId/comment/:commentId', auth(USER_ROLE.user), SocialController.updateComment);
 
 // Delete a comment by _id
-router.delete('/recipes/:recipeId/comment/:commentId', auth('user'), SocialController.deleteComment);
+router.delete('/recipes/:recipeId/comment/:commentId', auth(USER_ROLE.user), SocialController.deleteComment);
+
+// Upvote or downvote a recipe
+router.post('/recipes/:recipeId/vote', auth(USER_ROLE.user), SocialController.vote);
 
 
 
