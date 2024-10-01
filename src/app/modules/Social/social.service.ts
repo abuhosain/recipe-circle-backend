@@ -54,9 +54,73 @@ export const addComment = async (
   return Recipe.findById(recipeId).lean().exec() // Lean gives a plain JavaScript object instead of Mongoose document
 }
 
+export const updateComment = async (
+  userId: string,
+  recipeId: string,
+  commentId: string, // This is the _id of the comment
+  content: string,
+) => {
+  // Find the recipe by ID
+  const recipe = await Recipe.findById(recipeId)
+  if (!recipe) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
+  }
+
+  // Find the comment by _id and userId
+  const existingComment = recipe.comments.find(
+    (c: any) => c._id.toString() === commentId && c.user.toString() === userId,
+  )
+  if (!existingComment) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Comment not found')
+  }
+
+  // Update the content of the comment
+  existingComment.content = content
+
+  // Save the updated recipe
+  await recipe.save()
+
+  // Return the updated recipe
+  return Recipe.findById(recipeId).lean().exec()
+}
+
+
+
+export const deleteComment = async (
+  userId: string,
+  recipeId: string,
+  commentId: string, // This is the _id of the comment
+) => {
+  // Find the recipe by ID
+  const recipe = await Recipe.findById(recipeId)
+  if (!recipe) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
+  }
+
+  // Find and remove the comment by _id and userId
+  const commentIndex = recipe.comments.findIndex(
+    (c: any) => c._id.toString() === commentId && c.user.toString() === userId,
+  )
+  if (commentIndex === -1) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Comment not found')
+  }
+
+  // Remove the comment
+  recipe.comments.splice(commentIndex, 1)
+
+  // Save the updated recipe
+  await recipe.save()
+
+  // Return the updated recipe
+  return Recipe.findById(recipeId).lean().exec()
+}
+
+
 
 
 export const SocialServices = {
   addRating,
-  addComment
+  addComment,
+  updateComment,
+  deleteComment
 }

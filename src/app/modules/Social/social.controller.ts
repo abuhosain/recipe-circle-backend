@@ -38,7 +38,42 @@ const addComment = catchAsync(async (req, res) => {
 });
 
 
+// Update comment on a recipe
+const updateComment = catchAsync(async (req, res) => {
+  const { id } = req.user; // User ID from authenticated request
+  const { content } = req.body; // New content for the comment
+  const { recipeId, commentId } = req.params; // Recipe ID and Comment ID (_id) from URL params
+
+  const result = await SocialServices.updateComment(id, recipeId, commentId, content); // Call service to update comment
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Comment updated successfully',
+    data: result, // Send back the updated recipe
+  });
+});
+
+// Delete comment on a recipe
+const deleteComment = catchAsync(async (req, res) => {
+  const { id } = req.user; // User ID from authenticated request
+  const { recipeId, commentId } = req.params; // Recipe ID and Comment ID (_id) from URL params
+
+  const result = await SocialServices.deleteComment(id, recipeId, commentId); // Call service to delete comment
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Comment deleted successfully',
+    data: result, // Send back the updated recipe
+  });
+});
+
+
+
 export const SocialController = {
   addRating,
-  addComment
+  addComment,
+  updateComment,
+  deleteComment
 };

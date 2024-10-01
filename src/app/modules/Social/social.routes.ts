@@ -13,9 +13,17 @@ router.post(
 )
 // add comment
 router.post(
-  '/comment/:recipeId',
+  '/comment/recipes/:recipeId',
   auth(USER_ROLE.user, USER_ROLE.admin),
   SocialController.addComment,
 )
+
+// Update a comment by _id
+router.put('/recipes/:recipeId/comment/:commentId', auth('user'), SocialController.updateComment);
+
+// Delete a comment by _id
+router.delete('/recipes/:recipeId/comment/:commentId', auth('user'), SocialController.deleteComment);
+
+
 
 export const SocialRoutes = router
