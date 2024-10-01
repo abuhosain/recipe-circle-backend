@@ -14,8 +14,10 @@ export interface IUser {
   profilePicture: string;
   isPremium: boolean;
   bio? : string;
-  isDeleted : boolean;
-  isBlocked : boolean;
+  isDeleted? : boolean;
+  isBlocked? : boolean;
+  needsPasswordChange? : boolean;
+  passwordChangedAt?: Date;
 }
 
 export interface ILoginUser {
@@ -32,9 +34,16 @@ export type INewUser = {
 }
 
 export interface UserModel extends Model<IUser> {
-  isUserExistsByEmail(email: string): Promise<IUser>
+  isUserExistsByEmail(email: string): Promise<IUser>;
+
   isUserPasswordMatch(
     plainTextPassword: string,
     hashedPassword: string,
-  ): Promise<boolean>
+  ): Promise<boolean>;
+
+  
+  isJWTIssuedBeforePasswordChanged(
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimestamp: number,
+  ): boolean;
 }
