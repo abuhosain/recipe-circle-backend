@@ -19,13 +19,24 @@ const getAllRecipes = async (user : JwtPayload) => {
      let result;
 
      if(user?.role === "admin"){
-        result = await Recipe.find();
+        result = await Recipe.find({isDeleted : false, isPublished : true});
      } else if (user?.isPremium) {
-        result = await Recipe.find();
+        result = await Recipe.find({isDeleted : false, isPublished : true});
       }  else {
-        result = await Recipe.find({ isPremium: false }); // Only return non-premium recipes
+        result = await Recipe.find({isDeleted : false, isPublished : true, isPremium : false});// Only return non-premium recipes
       }
       return result;
+}
+
+const getRecipeById = async (id : string) => {
+    const result = await Recipe.findById(id);
+    if(result.isDeleted){
+        throw new AppError(httpStatus.NOT_FOUND, "This recipe is deleted")
+    }
+    if(!result.isPublished){
+        throw new AppError(httpStatus.BAD_REQUEST, "This service is not published")
+    }
+    return result;
 }
 
 const deleteRecipesFromDb = async (id : string) => {
@@ -37,5 +48,6 @@ const deleteRecipesFromDb = async (id : string) => {
 export const RecipeServices = {
     createRecipesIntoDb,
     deleteRecipesFromDb,
-    getAllRecipes
+    getAllRecipes,
+    getRecipeById
 }

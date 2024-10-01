@@ -15,6 +15,21 @@ const createRecipe = catchAsync(async (req, res) => {
   })
 })
 
+
+
+
+const getRecipeById = catchAsync(async (req, res) => {
+  const {recipeId} = req.params;
+  const result = await RecipeServices.getRecipeById(recipeId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Single Recipe retrive Successfully',
+    data: result,
+  })
+})
+
+
 const getAllRecipes = catchAsync(async (req, res) => {
   const email = req.user?.email
   const user: any = await User.findOne({ email: email })
@@ -26,6 +41,9 @@ const getAllRecipes = catchAsync(async (req, res) => {
     data: result,
   })
 })
+
+
+
 const deleteRecipe = catchAsync(async (req, res) => {
   const { id } = req.params
   const result = await RecipeServices.deleteRecipesFromDb(id)
@@ -41,4 +59,5 @@ export const RecipeControllers = {
   createRecipe,
   deleteRecipe,
   getAllRecipes,
+  getRecipeById
 }

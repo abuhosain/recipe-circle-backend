@@ -9,6 +9,9 @@ const router = express.Router()
 // create recipe
 router.post('/', RecipeControllers.createRecipe);
 
+// getSingle recipe
+router.get("/:recipeId", auth(USER_ROLE.admin, USER_ROLE.user), RecipeControllers.getRecipeById)
+
 // get all recipe
 router.get("/",OptionalAuth(USER_ROLE.admin, USER_ROLE.user), RecipeControllers.getAllRecipes);
 
