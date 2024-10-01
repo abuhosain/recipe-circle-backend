@@ -11,5 +11,11 @@ router.post(
   auth(USER_ROLE.user),
   SocialController.addRating,
 )
+// add comment
+router.post(
+  '/comment/:recipeId',
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  SocialController.addComment,
+)
 
 export const SocialRoutes = router

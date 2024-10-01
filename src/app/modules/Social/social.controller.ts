@@ -2,16 +2,16 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsynch";
 import sendResponse from "../../utils/sendResponse";
 import { SocialServices } from "./social.service";
-import { Types } from "mongoose";
+
 
  
 // Add rating to a recipe
 const addRating = catchAsync(async (req, res) => {
-  const userId = req?.user?.id;  
+  const {id} = req.user;
   const { rating } = req.body;  
   const {recipeId}  = req.params;
 
-  const result = await SocialServices.addRating(userId, recipeId, rating); // Call service to add rating
+  const result = await SocialServices.addRating(id , recipeId, rating); // Call service to add rating
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -21,6 +21,24 @@ const addRating = catchAsync(async (req, res) => {
   });
 });
 
+// Add comment to a recipe
+const addComment = catchAsync(async (req, res) => {
+  const { id } = req.user; // Get the user ID from the authenticated request
+  const { content } = req.body; // Get the comment text from the request body
+  const { recipeId } = req.params; // Get the recipe ID from the URL params
+
+  const result = await SocialServices.addComment(id, recipeId, content); // Call service to add comment
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Comment added successfully',
+    data: result, // Send back the updated recipe with comments
+  });
+});
+
+
 export const SocialController = {
   addRating,
+  addComment
 };

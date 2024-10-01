@@ -10,7 +10,10 @@ const router = express.Router()
 router.post('/', RecipeControllers.createRecipe);
 
 // getSingle recipe
-router.get("/:recipeId", auth(USER_ROLE.admin, USER_ROLE.user), RecipeControllers.getRecipeById)
+router.get("/:recipeId", auth(USER_ROLE.admin, USER_ROLE.user), RecipeControllers.getRecipeById);
+
+// update recipe
+router.put("/:recipeId", auth( USER_ROLE.user), RecipeControllers.getRecipeById)
 
 // get all recipe
 router.get("/",OptionalAuth(USER_ROLE.admin, USER_ROLE.user), RecipeControllers.getAllRecipes);
