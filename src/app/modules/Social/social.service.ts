@@ -8,7 +8,7 @@ export const addRating = async (
   rating: number,
 ) => {
   // Find the recipe by ID
-  const recipe = await Recipe.findById(recipeId)
+  const recipe = await Recipe.findById(recipeId);
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
   }
@@ -16,14 +16,17 @@ export const addRating = async (
   // Check if the user has already rated the recipe
   const existingRating = recipe.ratings.find(
     (r: any) => r.user.toString() === userId,
+
   )
 
   if (existingRating) {
     // If the user has already rated the recipe, update the existing rating
     existingRating.rating = rating
+
   } else {
     // If the user hasn't rated the recipe, add a new rating
     recipe.ratings.push({ user: userId, rating })
+
   }
 
   // Save the updated recipe

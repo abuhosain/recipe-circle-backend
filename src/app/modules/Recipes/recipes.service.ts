@@ -26,6 +26,7 @@ const getAllRecipes = async (
   if (!user?.isPremium && user?.role !== 'admin') {
     baseQuery = baseQuery.find({ isPremium: false })
   }
+  
 
   // Initialize the QueryBuilder with the base query and the user's query parameters
   const queryBuilder = new QueryBuilder(baseQuery, query)

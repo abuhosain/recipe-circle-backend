@@ -1,25 +1,35 @@
-import express from "express";
-import { AuthControllers } from "./auth.controller";
-import auth from "../../middleware/auth";
-import { USER_ROLE } from "./auth.constance";
+import express from 'express'
+import { AuthControllers } from './auth.controller'
+import auth from '../../middleware/auth'
+import { USER_ROLE } from './auth.constance'
 
-const router = express.Router();
+const router = express.Router()
 
 // signup user
-router.post("/signup", AuthControllers.singupUser);
+router.post('/signup', AuthControllers.singupUser)
 
 // singin in login
-router.post("/login", AuthControllers.loginUser);
+router.post('/login', AuthControllers.loginUser)
+
+// chnage password
+router.post(
+  '/change-password',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  AuthControllers.changePassword,
+)
+
+// refrsh token
+router.post('/refresh-token', AuthControllers.refreshToken);
 
 router.post(
-    '/change-password',
-    auth( USER_ROLE.admin, USER_ROLE.user),
-    AuthControllers.changePassword,
-  );
+  '/forget-password',
+  AuthControllers.forgetPassword,
+);
 
 router.post(
-    '/refresh-token',
-    AuthControllers.refreshToken,
-  )
+  '/reset-password',
+  AuthControllers.resetPassword,
+);
 
-export const AuthRoutes = router;
+
+export const AuthRoutes = router

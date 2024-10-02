@@ -2,7 +2,6 @@ import { Model, Types } from 'mongoose'
 import { USER_ROLE } from './auth.constance'
 
 export interface IUser {
-  _id? : Types.ObjectId;
   name: string;
   email: string;
   password: string;
@@ -13,6 +12,8 @@ export interface IUser {
   username: string;
   profilePicture: string;
   isPremium: boolean;
+  subscriptionStartDate?: Date;
+  subscriptionEndDate?: Date;
   bio? : string;
   isDeleted? : boolean;
   isBlocked? : boolean;
