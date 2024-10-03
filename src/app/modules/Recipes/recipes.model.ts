@@ -1,71 +1,66 @@
-import mongoose, { Schema, model } from 'mongoose';
-import { IRecipe } from './recipe.interface';
+import mongoose, { Schema, model, Types } from 'mongoose';
+import { IRecipe } from './recipes.interface';
 
+// Ingredient Schema
 const ingredientSchema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true }, // Ingredient name
   category: {
     type: String,
-    enum: ['Spices', 'Vegetables', 'Meat', 'Dairy', 'Other'],
+    enum: ['Spices', 'Vegetables', 'Meat', 'Dairy', 'Other'], // Allowed ingredient categories
     required: true,
   },
 });
 
-// Rating, comment, and vote schemas
-const ratingSchema = new Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  rating: { type: Number, required: true, min: 1, max: 5 },
-});
-
-const commentSchema = new Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  content: { type: String, required: true },
-});
-
+// Vote Schema
 const voteSchema = new Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  vote: { type: Number, enum: [1, -1], required: true },
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // User who voted
+  vote: { type: Number, enum: [1, -1], required: true }, // Vote value
 });
 
 // Main Recipe Schema
 const recipeSchema = new Schema<IRecipe>(
   {
-    title: { type: String, required: true, trim: true },
-    description: { type: String, trim: true },
-    ingredients: [ingredientSchema],
-    instructions: { type: String, required: true },
+    title: { type: String, required: true, trim: true }, // Recipe title
+    description: { type: String, trim: true }, // Recipe description
+    ingredients: [ingredientSchema], // Array of ingredients
+    instructions: { type: String, required: true }, // Cooking instructions
     images: [{ type: String }], // URLs to images
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    isPremium: { type: Boolean, default: false },
-    isDeleted: { type: Boolean, default: false },
-    isPublished: { type: Boolean, default: true },
-    tags: [{ type: String }],
-    cookingTime: { type: Number, required: true }, // in minutes
+    author: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
+    isPremium: { type: Boolean, default: false }, // Premium flag
+    isDeleted: { type: Boolean, default: false }, // Deleted flag
+    isPublished: { type: Boolean, default: true }, // Published flag
+    tags: [{ type: String }], // Tags for the recipe
+    cookingTime: { type: Number, required: true }, // Cooking time in minutes
 
-    // Default to empty arrays
-    ratings: { type: [ratingSchema], default: [] },
-    comments: { type: [commentSchema], default: [] },
-    votes: { type: [voteSchema], default: [] },
+    // References for ratings and comments
+    ratings: [{ type: Schema.Types.ObjectId, ref: 'Rating' }], // References to Rating documents
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }], // References to Comment documents
+    votes: { type: [voteSchema], default: [] }, // Embedded vote schema
   },
   { timestamps: true }
 );
 
 // Virtual field for average rating
 recipeSchema.virtual('averageRating').get(function () {
-  if (this.ratings.length === 0) return 0;
+  if (!this.ratings || this.ratings.length === 0) return 0;
   const sum = this.ratings.reduce((acc: number, rating: { rating: number }) => acc + rating.rating, 0);
   return sum / this.ratings.length;
 });
 
 // Virtual field for vote score
 recipeSchema.virtual('voteScore').get(function () {
-  if (this.votes.length === 0) return 0;
-  const sum = this.votes.reduce((acc: number, vote: { vote: number }) => acc + vote.vote, 0);
-  return sum;
+  if (!this.votes || this.votes.length === 0) return 0;
+  return this.votes.reduce((acc: number, vote: { vote: number }) => acc + vote.vote, 0);
 });
 
 // Virtual field for counting ratings
 recipeSchema.virtual('ratingCounts').get(function () {
-  return this.ratings.length;
+  return this.ratings ? this.ratings.length : 0; // Safeguard for undefined ratings
+});
+
+// Virtual field for counting comments
+recipeSchema.virtual('commentCounts').get(function () {
+  return this.comments ? this.comments.length : 0; // Safeguard for undefined comments
 });
 
 // Ensure virtual fields are serialized

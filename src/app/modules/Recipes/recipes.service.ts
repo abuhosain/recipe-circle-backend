@@ -26,7 +26,6 @@ const getAllRecipes = async (
   if (!user?.isPremium && user?.role !== 'admin') {
     baseQuery = baseQuery.find({ isPremium: false })
   }
-  
 
   // Initialize the QueryBuilder with the base query and the user's query parameters
   const queryBuilder = new QueryBuilder(baseQuery, query)
@@ -40,22 +39,41 @@ const getAllRecipes = async (
     .fields().modelQuery // Select specific fields if required // Get the built query
 
   // Execute the final query
-  const recipes = await resultQuery
+  const recipes = await resultQuery.populate('ratings').populate('comments')
   const totalData = await queryBuilder.countTotal() // Optional: Get total counts for pagination
 
   return { recipes, totalData }
 }
 
-const getRecipeById = async (id: string) => {
-  const result = await Recipe.findById(id)
-  if (result.isDeleted) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This recipe is deleted')
+const getRecipeById = async (user: JwtPayload, id: string) => {
+  // Fetch the recipe by its ID and populate ratings and comments
+  const recipe = await Recipe.findById(id)
+    .populate('ratings')
+    .populate('comments');
+
+  // Check if the recipe exists
+  if (!recipe) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found');
   }
-  if (!result.isPublished) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This service is not published')
+
+  // Apply restrictions for non-premium users and non-admins
+  if (recipe.isPremium && (!user?.isPremium && user?.role !== 'admin')) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This recipe is only available for premium users');
   }
-  return result
-}
+
+  // Check if the recipe is deleted
+  if (recipe.isDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted');
+  }
+
+  // Check if the recipe is published
+  if (!recipe.isPublished) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published');
+  }
+
+  // Return the recipe
+  return recipe;
+};
 
 const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
   const recipe = await Recipe.findById(id)

@@ -45,9 +45,9 @@ export interface IRecipe {
   ratings?: IRating[]; // List of user ratings
   comments?: IComment[]; // List of comments
   votes?: IVote[]; // List of upvotes and downvotes
-
   // Computed fields (optional)
   averageRating?: number;  // Average rating computed from ratings[]
   voteScore?: number;      // Sum of votes (upvotes vs. downvotes)
   ratingCounts?: number;   // Number of users who rated
+  commentCounts? : number;
 }

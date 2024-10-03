@@ -20,7 +20,8 @@ const createRecipe = catchAsync(async (req, res) => {
 
 const getRecipeById = catchAsync(async (req, res) => {
   const {recipeId} = req.params;
-  const result = await RecipeServices.getRecipeById(recipeId);
+  const user : any = req.user;
+  const result = await RecipeServices.getRecipeById(user, recipeId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -31,9 +32,10 @@ const getRecipeById = catchAsync(async (req, res) => {
 
 
 const getAllRecipes = catchAsync(async (req, res) => {
-  const email = req.user?.email
+  const email = req.user?.email;
+  const query = req.query;
   const user: any = await User.findOne({ email: email })
-  const result = await RecipeServices.getAllRecipes(user)
+  const result = await RecipeServices.getAllRecipes(user, query)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
