@@ -53,6 +53,8 @@ const createOrder = async (user: JwtPayload, payload: Partial<IOrder>) => {
     customerEmail: isUser.email,
     customerPhone: isUser.phone,
     customerAddress: "Bogura, Bangladesh",
+    startDate : payload.startDate || new Date(),
+    endDate : payload.endDate || moment().add(payload?.subscriptionDuration, 'months').toDate(),
   };
 
   

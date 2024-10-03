@@ -22,10 +22,12 @@ export const initiatePayment = async (paymentData: any) => {
       cus_state: 'Dhaka',
       cus_postcode: '1206',
       cus_country: 'Bangladesh',
+      stratDate : paymentData.stratDate,
+      endDate : paymentData.endDate,
       cus_phone: paymentData.customerPhone,
       type: 'json',
     })
-    //   console.log(response)
+      console.log("intial", response)
     return response.data
   } catch (err) {
     throw new Error('Payment initiation fialed ')
