@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import { join } from 'path'
-
 import { verifyPayment } from './payment.utils'
 import ejs from 'ejs'
 import { Order } from '../Order/order.model'
@@ -18,17 +17,22 @@ const confirmationService = async (transactionId: string, status: string) => {
       { transactionId },
       {
         paymentStatus: Payment_Status.paid,
+        status: Payment_Status.paid
       },
-    )
+    );
+
+    const orderData = await Order.findOne({transactionId });
+
     const updatedUser = await User.findOneAndUpdate(
-      { email: verifyResponse?.email },
+      { email: verifyResponse?.cus_email },
       {
         isPremium: true,
-        subscriptionStartDate: verifyResponse.startDate,
-        subscriptionEndDate: verifyResponse.endDate,
+        subscriptionStartDate: orderData?.startDate,
+        subscriptionEndDate: orderData?.endDate,
       },
       { new: true },
     )
+    
 
     paymentData = {
       consumerName: verifyResponse?.cus_name,

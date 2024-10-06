@@ -39,7 +39,7 @@ const getAllRecipes = async (
     .fields().modelQuery // Select specific fields if required // Get the built query
 
   // Execute the final query
-  const recipes = await resultQuery.populate('ratings').populate('comments')
+  const recipes = await resultQuery.populate('ratings').populate('comments').populate("author")
   const totalData = await queryBuilder.countTotal() // Optional: Get total counts for pagination
 
   return { recipes, totalData }
@@ -49,7 +49,14 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
   // Fetch the recipe by its ID and populate ratings and comments
   const recipe = await Recipe.findById(id)
     .populate('ratings')
-    .populate('comments');
+   .populate({
+    path: 'comments',
+    populate: {
+      path: 'user', // Populating the user field in comments
+      
+    },
+  })
+    .populate("author")
 
   // Check if the recipe exists
   if (!recipe) {

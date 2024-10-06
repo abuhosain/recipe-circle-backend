@@ -41,7 +41,6 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     profilePicture: {
       type: String,
-      required: true,
     },
     isPremium: {
       type: Boolean,
@@ -72,6 +71,12 @@ const userSchema = new Schema<IUser, UserModel>(
     passwordChangedAt: {
       type: Date,
     },
+    subscriptionStartDate : {
+      type : Date
+    },
+    subscriptionEndDate : {
+      type: Date
+    }
   },
   {
     timestamps: true,

@@ -4,6 +4,7 @@ import AppError from '../../errors/AppError'
 import httpStatus from 'http-status'
 import { IUser } from '../Auth/auth.interface'
 import { Types } from 'mongoose'
+import { Recipe } from '../Recipes/recipes.model'
 
 const getUserFromDb = async (id: string) => {
   const user = await User.findOne({
@@ -145,10 +146,32 @@ const unfollowUser = async (
   return updatedFollowersList.length // Return the updated number of followers
 }
 
+const getAllRecipesByUserId = async (userId: string, email : string) => {
+  const user = await User.findOne({email : email}); 
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  
+  // Check if the user is premium or admin
+  const isPremium = user.isPremium || user.role === "admin";
+
+  // Query to fetch recipes based on the user's premium status
+  const recipes = await Recipe.find({
+    author: userId,
+    isDeleted: false,
+    isPublished: true,
+    ...(isPremium ? {} : { isPremium: false }) // Only fetch free recipes if not premium
+  });
+
+  return recipes; // Return the fetched recipes
+};
+
+
 export const UserServices = {
   getUserFromDb,
   updateUserIntoDb,
   deleteUserAccountFromDb,
   followUser,
   unfollowUser,
+  getAllRecipesByUserId
 }

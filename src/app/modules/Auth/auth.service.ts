@@ -6,11 +6,13 @@ import { createToken, verifyToken } from './auth.utils'
 import config from '../../config'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt';
-import { sendEmail } from '../../utils/sendEmails'
+import { sendEmail } from '../../utils/sendEmails';
+
+
 const signUpUserIntoDb = async (payload: IUser) => {
   const user = await User.findOne({ username: payload.username })
   if (user) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken')
+    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken');
   }
   const result = await User.create(payload)
   return result
@@ -39,7 +41,7 @@ const loginUser = async (payload: ILoginUser) => {
   //   create token and sent to the client
 
   const jwtPayload = {
-    id: user?._id,
+    id: user?.id,
     email: user?.email,
     role: user?.role,
     name: user?.name,

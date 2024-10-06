@@ -9,7 +9,7 @@ import { User } from '../modules/Auth/auth.model'
 
 const auth = (...requiredRoles: IUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers['authorization']; 
+    const token = req.headers['authorization']
     if (!token) {
       return next(
         new AppError(
@@ -61,4 +61,4 @@ const auth = (...requiredRoles: IUserRole[]) => {
   })
 }
 
-export default auth;
+export default auth

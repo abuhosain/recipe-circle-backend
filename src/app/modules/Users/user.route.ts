@@ -21,5 +21,8 @@ router.post('/follow/:userId', auth(USER_ROLE.user), UserController.followUser);
 // unFollow a user
 router.post('/unfollow/:userId', auth(USER_ROLE.user), UserController.unFollowUser);
  
+// get recipes by user
+router.get("/recipe/:userId", auth(USER_ROLE.admin, USER_ROLE.user), UserController.getAllRecipesbyUserId);
+
 
 export const UserRoutes = router;

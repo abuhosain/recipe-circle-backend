@@ -100,6 +100,20 @@ const unFollowUser = catchAsync(async (req, res) => {
       data: result,
     });
   });
+
+  // get recipes by id
+
+  const getAllRecipesbyUserId = catchAsync(async (req, res) => {
+    const {userId} = req.params;
+    const email  = req?.user?.email;
+    const result = await UserServices.getAllRecipesByUserId(userId, email);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Successfully retrive all recipes by user',
+      data: result,
+    });
+  })
   
 
 export const UserController = {
@@ -107,5 +121,6 @@ export const UserController = {
   updateUser,
   deleteUser,
   followUser,
-  unFollowUser
+  unFollowUser,
+  getAllRecipesbyUserId
 }
