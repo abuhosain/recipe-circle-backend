@@ -5,6 +5,7 @@ import httpStatus from 'http-status'
 import { IUser } from '../Auth/auth.interface'
 import { Types } from 'mongoose'
 import { Recipe } from '../Recipes/recipes.model'
+import { TImageFile } from '../../interface/image.interface'
 
 const getUserFromDb = async (id: string) => {
   const user = await User.findOne({
@@ -35,7 +36,11 @@ const getUserWithAuth = async (email: string) => {
   return user
 }
 
-const updateUserIntoDb = async (email: string, payload: Partial<IUser>) => {
+const updateUserIntoDb = async (
+  email: string,
+  payload: Partial<IUser>,
+  file: TImageFile,
+) => {
   const user = await User.findOne({
     email: email,
     isDeleted: false,
@@ -45,16 +50,17 @@ const updateUserIntoDb = async (email: string, payload: Partial<IUser>) => {
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found')
   }
-
-  const { email: newEmail, } = payload
-
+  const { email: newEmail } = payload
   const emailCheck = await User.isUserExistsByEmail(newEmail as string)
- 
 
   if (emailCheck) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This email is already taken')
   }
 
+  if (file?.path) {
+    payload.profilePicture = file.path
+  }
+  
 
   const updatedUser = await User.findOneAndUpdate({ email: email }, payload, {
     new: true,

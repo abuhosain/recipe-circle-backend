@@ -1,7 +1,8 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { UserController } from './user.controllers'
 import auth from '../../middleware/auth'
 import { USER_ROLE } from '../Auth/auth.constance'
+import { multerUpload } from '../../config/multer.config'
 
 const router = express.Router()
 
@@ -15,7 +16,16 @@ router.get(
   UserController.getUserWithAuth,
 )
 // update user;
-router.put('/update', auth(USER_ROLE.user), UserController.updateUser)
+router.put(
+  '/update',
+  multerUpload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data)
+    next()
+  },
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  UserController.updateUser,
+)
 
 // delete user;
 router.delete(

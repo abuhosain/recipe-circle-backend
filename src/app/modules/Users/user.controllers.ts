@@ -30,8 +30,9 @@ const getUserWithAuth = catchAsync(async (req, res) => {
 
 const updateUser = catchAsync(async (req, res) => {
   const  email  = req?.user?.email;
+  const file = req.file;
   const payload = req.body
-  const result = await UserServices.updateUserIntoDb(email, payload)
+  const result = await UserServices.updateUserIntoDb(email, payload, file)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
