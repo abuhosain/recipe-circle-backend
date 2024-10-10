@@ -33,10 +33,10 @@ export interface IVote {
 export interface IRecipe {
   title: string;
   description?: string;
-  ingredients: IIngredient[];
-  instructions: string;
+  ingredients?: IIngredient[];
+  instructions?: string;
   images: string[]; // URLs to images
-  author: Types.ObjectId;
+  author?: Types.ObjectId;
   isPremium: boolean;
   isDeleted: boolean;
   isPublished: boolean;

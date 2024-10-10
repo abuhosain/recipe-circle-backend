@@ -2,6 +2,7 @@ import { Model, Types } from 'mongoose'
 import { USER_ROLE } from './auth.constance'
 
 export interface IUser {
+  _id : Types.ObjectId
   id? : string;
   name: string;
   email: string;

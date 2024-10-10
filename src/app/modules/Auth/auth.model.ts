@@ -5,6 +5,16 @@ import config from '../../config';
 
 const userSchema = new Schema<IUser, UserModel>(
   {
+    _id: {
+      type: Schema.Types.ObjectId, // Default MongoDB _id
+      auto: true, // Automatically generate an ObjectId
+    },
+    id: {
+      type: String,
+      required: true,
+      unique: true, // Ensure this is unique if necessary
+      default: () => new Types.ObjectId().toString(), // Generate a new unique id (or you can customize this)
+    },
     name: {
       type: String,
       required: true,

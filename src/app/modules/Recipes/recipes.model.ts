@@ -7,7 +7,7 @@ const ingredientSchema = new Schema({
   category: {
     type: String,
     enum: ['Spices', 'Vegetables', 'Meat', 'Dairy', 'Other'], // Allowed ingredient categories
-    required: true,
+    default : "Other"
   },
 });
 
@@ -23,7 +23,7 @@ const recipeSchema = new Schema<IRecipe>(
     title: { type: String, required: true, trim: true }, // Recipe title
     description: { type: String, trim: true }, // Recipe description
     ingredients: [ingredientSchema], // Array of ingredients
-    instructions: { type: String, required: true }, // Cooking instructions
+    instructions: { type: String, }, // Cooking instructions
     images: [{ type: String }], // URLs to images
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
     isPremium: { type: Boolean, default: false }, // Premium flag

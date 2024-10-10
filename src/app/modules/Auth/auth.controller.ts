@@ -4,10 +4,13 @@ import sendResponse from '../../utils/sendResponse'
 import { AuthServices } from './auth.service'
 import config from '../../config'
 import AppError from '../../errors/AppError'
+import { TImageFile } from '../../interface/image.interface'
+import { JwtPayload } from 'jsonwebtoken'
 
 const singupUser = catchAsync(async (req, res) => {
-  const user = req.body
-  const result = await AuthServices.signUpUserIntoDb(user)
+  const user = req.body;
+  const file = req.file;
+  const result = await AuthServices.signUpUserIntoDb(user, file as TImageFile )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -51,7 +54,7 @@ const refreshToken = catchAsync(async (req, res) => {
 const changePassword = catchAsync(async (req, res) => {
   const { ...passwordData } = req.body
   const user = req?.user
-  const result = await AuthServices.changePassword(user, passwordData)
+  const result = await AuthServices.changePassword(user as JwtPayload, passwordData)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

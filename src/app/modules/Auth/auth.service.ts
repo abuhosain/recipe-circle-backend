@@ -5,16 +5,21 @@ import { User } from './auth.model'
 import { createToken, verifyToken } from './auth.utils'
 import config from '../../config'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import bcrypt from 'bcrypt';
-import { sendEmail } from '../../utils/sendEmails';
+import bcrypt from 'bcrypt'
+import { sendEmail } from '../../utils/sendEmails'
+import { TImageFile } from '../../interface/image.interface'
 
-
-const signUpUserIntoDb = async (payload: IUser) => {
+const signUpUserIntoDb = async (payload: IUser, file: TImageFile) => {
   const user = await User.findOne({ username: payload.username })
   if (user) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken');
+    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken')
   }
-  const result = await User.create(payload)
+  const userData : IUser = {
+    ...payload,
+    profilePicture : file.path
+  }
+
+  const result = await User.create(userData)
   return result
 }
 
@@ -41,7 +46,7 @@ const loginUser = async (payload: ILoginUser) => {
   //   create token and sent to the client
 
   const jwtPayload = {
-    id: user?.id,
+    id: user?._id,
     email: user?.email,
     role: user?.role,
     name: user?.name,
@@ -72,44 +77,42 @@ const loginUser = async (payload: ILoginUser) => {
   }
 }
 
-
-
 const changePassword = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string },
 ) => {
   // checking if the user is exist
-  const user = await User.isUserExistsByEmail(userData.email);
+  const user = await User.isUserExistsByEmail(userData.email)
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !')
   }
   // checking if the user is already deleted
 
-  const isDeleted = user?.isDeleted;
+  const isDeleted = user?.isDeleted
 
   if (isDeleted) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !')
   }
 
   // checking if the user is blocked
 
-  const userStatus = user?.isBlocked;
+  const userStatus = user?.isBlocked
 
   if (userStatus === true) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !')
   }
 
   //checking if the password is correct
 
   if (!(await User.isUserPasswordMatch(payload.oldPassword, user?.password)))
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched')
 
   //hash new password
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_rounds),
-  );
+  )
 
   await User.findOneAndUpdate(
     {
@@ -121,11 +124,10 @@ const changePassword = async (
       needsPasswordChange: false,
       passwordChangedAt: new Date(),
     },
-  );
+  )
 
-  return null;
-};
-
+  return null
+}
 
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
@@ -178,30 +180,29 @@ const refreshToken = async (token: string) => {
   }
 }
 
-
 const forgetPassword = async (userEmail: string) => {
   // checking if the user is exist
-  const user = await User.isUserExistsByEmail(userEmail);
+  const user = await User.isUserExistsByEmail(userEmail)
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !')
   }
   // checking if the user is already deleted
-  const isDeleted = user?.isDeleted;
+  const isDeleted = user?.isDeleted
 
   if (isDeleted) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !')
   }
 
   // checking if the user is blocked
-  const userStatus = user?.isBlocked;
+  const userStatus = user?.isBlocked
 
   if (userStatus === true) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !')
   }
 
   const jwtPayload = {
-    id: user?._id,
+    id: user?.id,
     email: user?.email,
     role: user?.role,
     name: user?.name,
@@ -213,58 +214,55 @@ const forgetPassword = async (userEmail: string) => {
     jwtPayload,
     config.jwt_access_secret as string,
     '10m',
-  );
+  )
 
-  const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken}`;
+  const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken}`
 
-  sendEmail(user.email, resetUILink);
+  sendEmail(user.email, resetUILink)
 
   // console.log(resetUILink);
-};
-
-
-
+}
 
 const resetPassword = async (
   payload: { email: string; newPassword: string },
   token: string,
 ) => {
   // checking if the user is exist
-  const user = await User.isUserExistsByEmail(payload?.email);
+  const user = await User.isUserExistsByEmail(payload?.email)
 
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !')
   }
   // checking if the user is already deleted
-  const isDeleted = user?.isDeleted;
+  const isDeleted = user?.isDeleted
 
   if (isDeleted) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !')
   }
 
   // checking if the user is blocked
-  const userStatus = user?.isBlocked;
+  const userStatus = user?.isBlocked
 
   if (userStatus === true) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !')
   }
 
   const decoded = jwt.verify(
     token,
     config.jwt_access_secret as string,
-  ) as JwtPayload;
+  ) as JwtPayload
 
   //localhost:3000?email=email&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
 
   if (payload.email !== decoded.email) {
-    throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
+    throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!')
   }
 
   //hash new password
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_rounds),
-  );
+  )
 
   await User.findOneAndUpdate(
     {
@@ -276,9 +274,8 @@ const resetPassword = async (
       needsPasswordChange: false,
       passwordChangedAt: new Date(),
     },
-  );
-};
-
+  )
+}
 
 export const AuthServices = {
   signUpUserIntoDb,
@@ -286,5 +283,5 @@ export const AuthServices = {
   refreshToken,
   changePassword,
   forgetPassword,
-  resetPassword
+  resetPassword,
 }

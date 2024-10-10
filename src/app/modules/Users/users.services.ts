@@ -12,15 +12,32 @@ const getUserFromDb = async (id: string) => {
     isBlocked: false,
     isDeleted: false,
   })
+    .populate({
+      path: 'followers',
+    })
+    .populate({
+      path: 'following',
+    })
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found')
   }
   return user
 }
 
-const updateUserIntoDb = async (id: string, payload: Partial<IUser>) => {
+const getUserWithAuth = async (email: string) => {
+  const user = await User.findOne({ email: email })
+    .populate({
+      path: 'followers',
+    })
+    .populate({
+      path: 'following',
+    })
+  return user
+}
+
+const updateUserIntoDb = async (email: string, payload: Partial<IUser>) => {
   const user = await User.findOne({
-    _id: id,
+    email: email,
     isDeleted: false,
     isBlocked: false,
   })
@@ -29,20 +46,17 @@ const updateUserIntoDb = async (id: string, payload: Partial<IUser>) => {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found')
   }
 
-  const { email: newEmail, username: newUsername } = payload
+  const { email: newEmail, } = payload
 
   const emailCheck = await User.isUserExistsByEmail(newEmail as string)
-  const userNameCheck = await User.findOne({ username: newUsername as string })
+ 
 
   if (emailCheck) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This email is already taken')
   }
 
-  if (userNameCheck) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken')
-  }
 
-  const updatedUser = await User.findByIdAndUpdate(id, payload, {
+  const updatedUser = await User.findOneAndUpdate({ email: email }, payload, {
     new: true,
   })
 
@@ -146,26 +160,24 @@ const unfollowUser = async (
   return updatedFollowersList.length // Return the updated number of followers
 }
 
-const getAllRecipesByUserId = async (userId: string, email : string) => {
-  const user = await User.findOne({email : email}); 
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  
-  // Check if the user is premium or admin
-  const isPremium = user.isPremium || user.role === "admin";
-
+const getAllRecipesByUserId = async (userId: string) => {
   // Query to fetch recipes based on the user's premium status
   const recipes = await Recipe.find({
     author: userId,
     isDeleted: false,
     isPublished: true,
-    ...(isPremium ? {} : { isPremium: false }) // Only fetch free recipes if not premium
-  });
+  })
+    .populate('ratings')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'user', // Populating the user field in comments
+      },
+    })
+    .populate('author')
 
-  return recipes; // Return the fetched recipes
-};
-
+  return recipes // Return the fetched recipes
+}
 
 export const UserServices = {
   getUserFromDb,
@@ -173,5 +185,6 @@ export const UserServices = {
   deleteUserAccountFromDb,
   followUser,
   unfollowUser,
-  getAllRecipesByUserId
+  getAllRecipesByUserId,
+  getUserWithAuth,
 }

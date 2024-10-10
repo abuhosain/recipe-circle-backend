@@ -3,10 +3,16 @@ import catchAsync from '../../utils/catchAsynch'
 import sendResponse from '../../utils/sendResponse'
 import { RecipeServices } from './recipes.service'
 import { User } from '../Auth/auth.model'
+import AppError from '../../errors/AppError'
+import { TImageFiles } from '../../interface/image.interface'
 
 const createRecipe = catchAsync(async (req, res) => {
+  if (!req.files) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Please upload an image!');
+  }
+  const files = req.files;
   const payload = req.body
-  const result = await RecipeServices.createRecipesIntoDb(payload)
+  const result = await RecipeServices.createRecipesIntoDb(payload, files as TImageFiles)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -34,7 +40,7 @@ const getRecipeById = catchAsync(async (req, res) => {
 const getAllRecipes = catchAsync(async (req, res) => {
   const email = req.user?.email;
   const query = req.query;
-  const user: any = await User.findOne({ email: email })
+  const user: any = await User.findOne({ email: email, })
   const result = await RecipeServices.getAllRecipes(user, query)
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -60,8 +66,9 @@ const updateRecipeById = catchAsync(async (req, res) => {
   })
 
 const deleteRecipe = catchAsync(async (req, res) => {
+  const user : any = req.user;
   const { recipeId } = req.params
-  const result = await RecipeServices.deleteRecipesFromDb(recipeId)
+  const result = await RecipeServices.deleteRecipesFromDb(recipeId, user)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
