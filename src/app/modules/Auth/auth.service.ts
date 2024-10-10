@@ -9,17 +9,13 @@ import bcrypt from 'bcrypt'
 import { sendEmail } from '../../utils/sendEmails'
 import { TImageFile } from '../../interface/image.interface'
 
-const signUpUserIntoDb = async (payload: IUser, file: TImageFile) => {
-  const user = await User.findOne({ username: payload.username })
+const signUpUserIntoDb = async (payload: IUser) => {
+  const user = await User.findOne({ email: payload.email })
   if (user) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken')
+    throw new AppError(httpStatus.BAD_REQUEST, 'This email is already taken')
   }
-  const userData : IUser = {
-    ...payload,
-    profilePicture : file.path
-  }
-
-  const result = await User.create(userData)
+ 
+  const result = await User.create(payload)
   return result
 }
 

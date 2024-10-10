@@ -9,8 +9,7 @@ import { JwtPayload } from 'jsonwebtoken'
 
 const singupUser = catchAsync(async (req, res) => {
   const user = req.body;
-  const file = req.file;
-  const result = await AuthServices.signUpUserIntoDb(user, file as TImageFile )
+  const result = await AuthServices.signUpUserIntoDb(user )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

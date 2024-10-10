@@ -11,15 +11,6 @@ const router = express.Router()
 // signup user
 router.post(
   '/signup',
-  multerUpload.single('file'),
-  (req: Request, res: Response, next: NextFunction) => {
-    if (!req.file) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'No file uploaded')
-    }
-    req.body = JSON.parse(req.body.data)
-
-    next()
-  },
   AuthControllers.singupUser,
 )
 

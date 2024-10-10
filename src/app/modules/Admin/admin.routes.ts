@@ -6,17 +6,31 @@ import { AdminControllers } from './admin.controllers'
 
 const router = express.Router()
 
+
+
+// get all user
+router.get('/user', auth(USER_ROLE.admin), AdminControllers.getAllUser);
+
+
+router.get("/recipe", auth(USER_ROLE.admin), AdminControllers.getAllRecipe )
+
 // block user
-router.post('/block/:id', auth(USER_ROLE.admin), AdminControllers.blockUser);
+router.put('/block/:id', auth(USER_ROLE.admin), AdminControllers.blockUser);
 // unblock user
-router.post('/ublock/:id', auth(USER_ROLE.admin), AdminControllers.unBlockUser);
+router.put('/unblock/:id', auth(USER_ROLE.admin), AdminControllers.unBlockUser);
 
 // publish recipe
-router.post('/publish/:id', auth(USER_ROLE.admin), AdminControllers.publishRecipe);
+router.put('/publish/:id', auth(USER_ROLE.admin), AdminControllers.publishRecipe);
+
 // unpublish recipe
-router.post('/unpublish/:id', auth(USER_ROLE.admin), AdminControllers.unPublishRecipe);
+router.put('/unpublish/:id', auth(USER_ROLE.admin), AdminControllers.unPublishRecipe);
+
 // delete recipe
-router.post('/:id', auth(USER_ROLE.admin), AdminControllers.deleteRecipe);
+router.delete('recipe/:id', auth(USER_ROLE.admin), AdminControllers.deleteRecipe);
+
+// delete user
+router.delete('/user/:id', auth(USER_ROLE.admin), AdminControllers.deleteUser);
+
 
 
 export const AdminRoutes = router

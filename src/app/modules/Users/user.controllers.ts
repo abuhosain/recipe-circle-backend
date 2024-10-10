@@ -5,6 +5,7 @@ import { UserServices } from './users.services'
 import { User } from '../Auth/auth.model'
 import AppError from '../../errors/AppError'
 import { Types } from 'mongoose'
+import { TImageFile } from '../../interface/image.interface'
 
 const getUser = catchAsync(async (req, res) => {
   const { id } = req.params
@@ -30,7 +31,7 @@ const getUserWithAuth = catchAsync(async (req, res) => {
 
 const updateUser = catchAsync(async (req, res) => {
   const  email  = req?.user?.email;
-  const file = req.file;
+  const file : any = req.file;
   const payload = req.body
   const result = await UserServices.updateUserIntoDb(email, payload, file)
 
