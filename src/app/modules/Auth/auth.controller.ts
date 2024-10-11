@@ -4,12 +4,13 @@ import sendResponse from '../../utils/sendResponse'
 import { AuthServices } from './auth.service'
 import config from '../../config'
 import AppError from '../../errors/AppError'
-import { TImageFile } from '../../interface/image.interface'
 import { JwtPayload } from 'jsonwebtoken'
 
 const singupUser = catchAsync(async (req, res) => {
   const user = req.body;
-  const result = await AuthServices.signUpUserIntoDb(user )
+  const file : any = req.file;
+
+  const result = await AuthServices.signUpUserIntoDb(user, file )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

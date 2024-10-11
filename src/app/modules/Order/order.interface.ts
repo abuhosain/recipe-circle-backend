@@ -12,7 +12,7 @@ export interface IOrder extends Document {
   subscriptionDuration: number; // In months
   startDate?: Date;
   endDate?: Date;
-  status: keyof typeof Order_Status; // Strict typing for status
+  status?: keyof typeof Order_Status; // Strict typing for status
   paymentStatus?: keyof typeof Payment_Status; // Strict typing for payment status
   transactionId?: string;  
 }

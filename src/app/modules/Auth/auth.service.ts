@@ -9,13 +9,17 @@ import bcrypt from 'bcrypt'
 import { sendEmail } from '../../utils/sendEmails'
 import { TImageFile } from '../../interface/image.interface'
 
-const signUpUserIntoDb = async (payload: IUser) => {
+const signUpUserIntoDb = async (payload: IUser, file: TImageFile) => {
   const user = await User.findOne({ email: payload.email })
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This email is already taken')
   }
- 
-  const result = await User.create(payload)
+
+  const userData : IUser = {
+    ...payload,
+    profilePicture: file.path,
+  };
+  const result = await User.create(userData)
   return result
 }
 
@@ -212,7 +216,7 @@ const forgetPassword = async (userEmail: string) => {
     '10m',
   )
 
-  const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken}`
+  const resetUILink = `${config.reset_pass_ui_link}/reset-password?email=${user.email}&token=${resetToken}`
 
   sendEmail(user.email, resetUILink)
 
