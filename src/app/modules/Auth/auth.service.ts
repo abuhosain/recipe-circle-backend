@@ -24,7 +24,7 @@ const signUpUserIntoDb = async (payload: IUser, file: TImageFile) => {
 }
 
 const loginUser = async (payload: ILoginUser) => {
-  const user = await User.isUserExistsByEmail(payload.email)
+  const user = await User.isUserExistsByEmail(payload?.email)
 
   // if user not found
   if (!user) {
@@ -175,6 +175,7 @@ const refreshToken = async (token: string) => {
     config.jwt_access_secret as string,
     config.jwt_access_expire_in as string,
   )
+
   return {
     accessToken,
   }
@@ -202,7 +203,7 @@ const forgetPassword = async (userEmail: string) => {
   }
 
   const jwtPayload = {
-    id: user?.id,
+    id: user?._id,
     email: user?.email,
     role: user?.role,
     name: user?.name,

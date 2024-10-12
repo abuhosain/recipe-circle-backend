@@ -59,17 +59,18 @@ const getAllRecipes = async (
 }
 
 const getRecipeById = async (user: JwtPayload, id: string) => {
-  // Fetch the recipe by its ID and populate ratings and comments
+  // Fetch the recipe by its ID and populate ratings, comments, and their users
   const recipe = await Recipe.findById(id)
-    .populate('ratings')
+    .populate('ratings') // Populating ratings
     .populate({
-      path: 'comments',
+      path: 'comments', // Populating comments
     })
-    .populate('author')
-    .lean()
+    .populate('author') // Populating the recipe author
+    .lean();
+
   // Check if the recipe exists
   if (!recipe) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
+    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found');
   }
 
   // Apply restrictions for non-premium users and non-admins
@@ -77,22 +78,23 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
     throw new AppError(
       httpStatus.FORBIDDEN,
       'This recipe is only available for premium users',
-    )
+    );
   }
 
   // Check if the recipe is deleted
   if (recipe.isDeleted) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted')
+    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted');
   }
 
   // Check if the recipe is published
   if (!recipe.isPublished) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published')
+    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published');
   }
 
   // Return the recipe
-  return recipe
-}
+  return recipe;
+};
+
 
 const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
   const recipe = await Recipe.findById(id)

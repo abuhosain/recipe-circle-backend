@@ -25,7 +25,7 @@ const recipeSchema = new Schema<IRecipe>(
     ingredients: [ingredientSchema], // Array of ingredients
     instructions: { type: String, }, // Cooking instructions
     images: [{ type: String }], // URLs to images
-    author: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
+    author: { type: Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
     isPremium: { type: Boolean, default: false }, // Premium flag
     isDeleted: { type: Boolean, default: false }, // Deleted flag
     isPublished: { type: Boolean, default: true }, // Published flag
@@ -33,8 +33,8 @@ const recipeSchema = new Schema<IRecipe>(
     cookingTime: { type: Number, required: true }, // Cooking time in minutes
 
     // References for ratings and comments
-    ratings: [{ type: Schema.Types.ObjectId, ref: 'Rating' }], // References to Rating documents
-    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }], // References to Comment documents
+    ratings: [{ type: Types.ObjectId, ref: 'Rating' }], // References to Rating documents
+    comments: [{ type: Types.ObjectId, ref: 'Comment' }], // References to Comment documents
     votes: { type: [voteSchema], default: [] }, // Embedded vote schema
   },
   { timestamps: true }

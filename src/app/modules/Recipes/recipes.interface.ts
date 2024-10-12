@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IRating {
+  _id: IRating;
   recipe: Types.ObjectId;
   user: Types.ObjectId;
   rating: number; // 1 to 5
@@ -19,7 +20,7 @@ export interface ITimer {
 }
 
 export interface IComment {
-  user: Types.ObjectId;
+  user?: Types.ObjectId;
   recipe: Types.ObjectId;
   content: string;
 }

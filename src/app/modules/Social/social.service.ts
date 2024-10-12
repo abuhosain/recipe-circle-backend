@@ -25,7 +25,7 @@ export const addRating = async (
     await existingRating.save();
   } else {
     // If no existing rating, create a new one
-    const newRating = new Rating({
+    const newRating : any = new Rating({
       user: userId,
       recipe: recipeId,
       rating: ratingValue,
@@ -57,7 +57,7 @@ export const addComment = async (
   }
 
   // Create a new comment
-  const newComment = await Comment.create({
+  const newComment : any = await Comment.create({
     recipe: recipeId,
     user: userId,
     content: content,
@@ -154,7 +154,7 @@ export const deleteComment = async (
   recipeId: string,
   voteValue: 1 | -1, // 1 for upvote, -1 for downvote
 ) => {
-  const recipe = await Recipe.findById(recipeId);
+  const recipe : any = await Recipe.findById(recipeId);
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found');
   }

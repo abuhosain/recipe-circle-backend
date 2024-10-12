@@ -88,7 +88,7 @@ const followUser = async (
   }
 
   // Find both users (follower and followee)
-  const follower = await User.findById(followerId)
+  const follower : any = await User.findById(followerId)
   const followee = await User.findById(followeeId)
 
   if (!followee) {
@@ -133,7 +133,7 @@ const unfollowUser = async (
   }
 
   // Find both users (follower and followee)
-  const follower = await User.findById(followerId)
+  const follower : any = await User.findById(followerId)
   const followee = await User.findById(followeeId)
 
   if (!followee) {
@@ -151,7 +151,7 @@ const unfollowUser = async (
 
   // Remove the followee from the follower's following list
   follower.following = followingList.filter(
-    (followingId) => !followingId.equals(followeeId),
+    (followingId : any) => !followingId.equals(followeeId),
   )
 
   // Remove the follower from the followee's followers list
