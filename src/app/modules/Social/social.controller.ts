@@ -74,7 +74,8 @@ const vote = catchAsync(async (req, res) => {
   const { vote } = req.body; // 1 for upvote, -1 for downvote
   const { recipeId } = req.params;
   const id = req?.user?.id; // User ID from authentication
-
+  console.log(recipeId, id)
+console.log("vote body", req.body)
   const updatedRecipe = await SocialServices.voteRecipe(id, recipeId, vote);
 
   sendResponse(res, {

@@ -13,7 +13,6 @@ app.use(express.json())
 app.use(cockieParser())
 
 const allowedOrigins = 'https://recipe-circle-frontend.vercel.app' // Production frontend
-
 app.use(cors({origin : allowedOrigins, credentials : true}))
 
 // Serve static files from the 'build' directory

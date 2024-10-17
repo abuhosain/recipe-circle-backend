@@ -63,10 +63,11 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
   const recipe = await Recipe.findById(id)
     .populate('ratings') // Populating ratings
     .populate({
-      path: 'comments', // Populating comments
+      path: 'comments',
+       // Populating comments
     })
     .populate('author') // Populating the recipe author
-    .lean();
+   
 
   // Check if the recipe exists
   if (!recipe) {
