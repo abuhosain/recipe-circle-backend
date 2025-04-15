@@ -3,7 +3,6 @@ import { ZodError } from 'zod';
 import config from '../config';
 import AppError from '../errors/AppError';
 import { TErrorSources } from '../interface/error';
-import { TImageFiles } from '../interface/image.interface';
 import { handleZodError } from '../errors/handleZodeError';
 import { handleValidationError } from '../errors/handleValidationError';
 import { handleCastError } from '../errors/handleCastError';
@@ -24,8 +23,6 @@ const globalErrorHandler: ErrorRequestHandler = async (
       message: 'Something went wrong',
     },
   ];
-
-  
 
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);

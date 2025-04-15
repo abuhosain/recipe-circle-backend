@@ -6,7 +6,7 @@ const ingredientSchema = new Schema({
   name: { type: String, required: true }, // Ingredient name
   category: {
     type: String,
-    enum: ['Spices', 'Vegetables', 'Meat', 'Dairy', 'Other'], // Allowed ingredient categories
+    enum: ['Spices', 'Vegetables', 'Meat', 'Dairy', 'Other'], 
     default : "Other"
   },
 });

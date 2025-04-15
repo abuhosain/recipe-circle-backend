@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import config from "./app/config";
 import app from "./app";
 
-let server: Server;
+let server: any;
 
 async function main() {
     try {

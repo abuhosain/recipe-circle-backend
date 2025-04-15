@@ -9,7 +9,7 @@ const router = express.Router()
 
 
 // get all user
-router.get('/user', auth(USER_ROLE.admin), AdminControllers.getAllUser);
+router.get('/user', auth(USER_ROLE.admin, USER_ROLE.user), AdminControllers.getAllUser);
 
 
 router.get("/recipe", auth(USER_ROLE.admin), AdminControllers.getAllRecipe )

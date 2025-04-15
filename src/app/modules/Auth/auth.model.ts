@@ -113,7 +113,7 @@ userSchema.pre('save', async function (next) {
 
 // Method to find user by email
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await this.findOne({ email }).select('+password'); // Always include password for comparison
+  return await this.findOne({ email }).select('+password');  
 };
 
 // Set password to an empty string after saving for security
